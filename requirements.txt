@@ -1,0 +1,14 @@
+dask
+deprecation
+gdal
+h5netcdf
+h5py
+matplotlib
+netCDF4
+numpy
+semver
+scipy
+tqdm
+wradlib
+xarray
+xmltodict
