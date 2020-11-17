@@ -14,6 +14,7 @@
 
 # whitelist .py, .f-files and .sh files
 !*.py
+!*ipynb
 !*.f
 !*.sh
 
@@ -24,6 +25,10 @@
 # whitelist files under `miubrt`
 !/miubrt/
 !/miubrt/*
+
+# whitelist files under `notebooks`
+!/notebooks/
+!/notebooks/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -98,6 +103,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*-Copy*.ipynb
 
 # pyenv
 .python-version
