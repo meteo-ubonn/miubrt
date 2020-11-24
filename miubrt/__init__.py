@@ -16,13 +16,14 @@ except NameError:
 
 if __MIUBRT_SETUP__:
     import sys as _sys
+
     _sys.stderr.write("Running from source directory.\n")
     del _sys
 else:
     # Make sure that deprecation warnings get printed by default
     import warnings as _warnings
-    _warnings.filterwarnings("always", category=DeprecationWarning,
-                             module='miubrt')
+
+    _warnings.filterwarnings("always", category=DeprecationWarning, module="miubrt")
 
     # versioning
     try:
@@ -33,6 +34,6 @@ else:
         __version__ = "devel"
 
     # packages
-    from . import util  # noqa
     from . import io  # noqa
+    from . import util  # noqa
     from . import xarray  # noqa

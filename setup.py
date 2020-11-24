@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2011-2019, miub developers.
+# Copyright (c) 2020, miub developers.
 # Distributed under the MIT License. See LICENSE.txt for more info.
 
 """miubrt - MIUB-radartools - Tools for exploitation of BoXPol radar data and

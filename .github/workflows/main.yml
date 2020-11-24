@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: lint and style checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort
+      - name: Lint with flake8
+        run: |
+          flake8 .
+      - name: Black style check
+        run: |
+          black --check .
+      - name: Isort import check
+        run: |
+          isort --check .
+
+  build_0:
+    name: notebooks tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    env:
+      MIUBRT_DATA: ./miubrt-test-data
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        channels: conda-forge
+        mamba-version: "*"
+        activate-environment: miubrt-tests
+        channel-priority: strict
+        auto-update-conda: false
+        python-version: ${{ matrix.python-version }}
+    - name: Set up conda environment
+      run: |
+        mamba install --yes --file=requirements.txt --file=requirements_devel.txt
+        conda list
+    - name: Install miubrt
+      run: |
+        python setup.py sdist
+        python -m pip install . --no-deps
+    - name: Clone miubrt-test-data
+      run: |
+        git clone https://github.com/meteo-ubonn/miubrt-test-data.git
+    - name: Test with pytest
+      run: |
+        echo $MIUBRT_DATA
+        export MIUBRT_DATA=`realpath $MIUBRT_DATA`
+        pytest -v notebooks/
