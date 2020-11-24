@@ -2,7 +2,6 @@
 # Copyright (c) 2019-2020, wradlib developers.
 # Distributed under the MIT License. See LICENSE.txt for more info.
 
-import io
 import os
 import sys
 from distutils.version import LooseVersion
