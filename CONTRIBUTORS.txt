@@ -2,6 +2,7 @@ Developers
 ----------
 
 Kai Mühlbauer - University of Bonn
+Prabhakar Shrestha - University of Bonn
 
 
 Contributors
