@@ -1,3 +1,4 @@
+bottleneck
 dask
 datashader
 deprecation
