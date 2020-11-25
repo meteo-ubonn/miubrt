@@ -10,13 +10,18 @@
 !/pyproject.toml
 !/README.md
 !/requirements.txt
+!/requirements_devel.txt
 !/setup.py
 
 # whitelist .py, .f-files and .sh files
 !*.py
-!*ipynb
+!*.ipynb
 !*.f
 !*.sh
+
+# whitelist files under `.github`
+!/.github/
+!/.github/*
 
 # whitelist files under `scripts`
 !/scripts/

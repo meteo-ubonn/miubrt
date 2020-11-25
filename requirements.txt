@@ -1,9 +1,12 @@
+bottleneck
 dask
+datashader
 deprecation
 gdal
 h5netcdf
 h5py
-matplotlib
+hvplot
+matplotlib-base
 netCDF4
 numpy
 semver

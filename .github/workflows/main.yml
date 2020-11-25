@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: lint and style checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black isort
+      - name: Lint with flake8
+        run: |
+          flake8 .
+      - name: Black style check
+        run: |
+          black --check .
+      - name: Isort import check
+        run: |
+          isort --check .
+
+  build_0:
+    name: notebooks tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    env:
+      MIUBRT_DATA: ./miubrt-test-data
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8"]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: install micromamba
+      run: |
+        wget -qO- https://micromamba.snakepit.net/api/micromamba/linux-64/latest | tar -xvj bin/micromamba --strip-components=1
+        ./micromamba shell init -s bash -p ~/micromamba
+    - name: Install deps
+      run: |
+        export MAMBA_ROOT_PREFIX=~/micromamba
+        export MAMBA_EXE=$(pwd)/micromamba
+        . $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh
+        ./micromamba create --yes -n miubrt-tests python=${{ matrix.python-version }} --file requirements.txt --file requirements_devel.txt --channel conda-forge
+    - name: Install miubrt
+      run: |
+        export MAMBA_ROOT_PREFIX=~/micromamba
+        export MAMBA_EXE=$(pwd)/micromamba
+        . $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh
+        micromamba activate miubrt-tests
+        python setup.py sdist
+        python -m pip install . --no-deps
+    - name: Clone miubrt-test-data
+      run: |
+        git clone https://github.com/meteo-ubonn/miubrt-test-data.git
+    - name: Test with pytest
+      run: |
+        export MAMBA_ROOT_PREFIX=~/micromamba
+        export MAMBA_EXE=$(pwd)/micromamba
+        . $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh
+        micromamba activate miubrt-tests
+        echo $MIUBRT_DATA
+        export MIUBRT_DATA=`realpath $MIUBRT_DATA`
+        pytest -v notebooks/

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2011-2019, miub developers.
+# Copyright (c) 2020, miub developers.
 # Distributed under the MIT License. See LICENSE.txt for more info.
 
 """miubrt - MIUB-radartools - Tools for exploitation of BoXPol radar data and
@@ -7,13 +7,12 @@ DWD radar network
 
 """
 
-import os
-import sys
-import semver
-import warnings
-from subprocess import check_output, CalledProcessError
-
 import builtins
+import os
+import warnings
+from subprocess import CalledProcessError, check_output
+
+import semver
 
 DOCLINES = __doc__.split("\n")
 
@@ -36,56 +35,52 @@ Operating System :: MacOS :: MacOS X
 Operating System :: Microsoft :: Windows
 """
 
-NAME = 'miubrt'
+NAME = "miubrt"
 MAINTAINER = "Kai Mühlbauer"
 MAINTAINER_EMAIL = "kai.muehlbauer@uni-bonn.de"
 DESCRIPTION = DOCLINES[0]
 LONG_DESCRIPTION = "\n".join(DOCLINES[2:])
-URL = "https://git.meteo.uni-bonn.de/projects/miub-radartools"
-DOWNLOAD_URL = "https://git.meteo.uni-bonn.de/projects/miub-radartools/repository"
-LICENSE = 'MIT'
-CLASSIFIERS = filter(None, CLASSIFIERS.split('\n'))
+URL = "https://github.com/meteo-ubonn/miubrt"
+DOWNLOAD_URL = "https://github.com/meteo-ubonn/miubrt"
+LICENSE = "MIT"
+CLASSIFIERS = filter(None, CLASSIFIERS.split("\n"))
 PLATFORMS = ["Linux", "Mac OS-X", "Unix", "Windows"]
 MAJOR = 0
 MINOR = 1
 PATCH = 0
-VERSION = '%d.%d.%d' % (MAJOR, MINOR, PATCH)
+VERSION = "%d.%d.%d" % (MAJOR, MINOR, PATCH)
 
 
 # Return the git revision as a string
 def git_version():
     try:
-        git_rev = check_output(['git', 'describe', '--tags', '--long'])
-        git_hash = check_output(['git', 'rev-parse', 'HEAD'])
-        branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+        git_rev = check_output(["git", "describe", "--tags", "--long"])
+        git_hash = check_output(["git", "rev-parse", "HEAD"])
+        branch = check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"])
 
-        git_rev = git_rev.strip().decode('ascii').split('-')
-        branch = branch.strip().decode('ascii')
+        git_rev = git_rev.strip().decode("ascii").split("-")
+        branch = branch.strip().decode("ascii")
 
-        GIT_REVISION = '-'.join([git_rev[0],
-                                 'dev' + git_rev[1]])
-        GIT_REVISION = '+'.join([GIT_REVISION,
-                                 git_rev[2]])
-        GIT_HASH = git_hash.strip().decode('ascii')
+        GIT_REVISION = "-".join([git_rev[0], "dev" + git_rev[1]])
+        GIT_REVISION = "+".join([GIT_REVISION, git_rev[2]])
+        GIT_HASH = git_hash.strip().decode("ascii")
 
         ver = semver.parse_version_info(GIT_REVISION)
         minor = ver.minor
         patch = ver.patch
 
-        if ver.prerelease != 'dev0':
-            if 'release' not in branch:
+        if ver.prerelease != "dev0":
+            if "release" not in branch:
                 minor += 1
             else:
                 patch += 1
-        GIT_REVISION = semver.format_version(ver.major,
-                                             minor,
-                                             patch,
-                                             ver.prerelease)
+        GIT_REVISION = semver.format_version(ver.major, minor, patch, ver.prerelease)
 
     except (CalledProcessError, OSError):
-        print('MIUBRT: Unable to import git_revision from repository.')
+        print("MIUBRT: Unable to import git_revision from repository.")
         raise
     return GIT_REVISION, GIT_HASH
+
 
 # This is a bit hackish: we are setting a global variable so that the main
 # miub-radartools __init__ can detect if it is being loaded by the setup
@@ -93,7 +88,7 @@ def git_version():
 builtins.__MIUBRT_SETUP__ = True
 
 
-def write_version_py(filename='miubrt/version.py'):
+def write_version_py(filename="miubrt/version.py"):
     cnt = """
 # THIS FILE IS GENERATED FROM SETUP.PY
 short_version = '%(version)s'
@@ -109,44 +104,53 @@ if not release:
     # Python 3.
     SHORT_VERSION = VERSION
     FULL_VERSION = VERSION
-    GIT_REVISION = VERSION + '-unknown'
-    GIT_HASH = 'unknown'
+    GIT_REVISION = VERSION + "-unknown"
+    GIT_HASH = "unknown"
     ISRELEASED = "'unknown'"
 
-    if os.path.exists('.git'):
+    if os.path.exists(".git"):
         GIT_REVISION, GIT_HASH = git_version()
-    elif os.path.exists('miubrt/version.py'):
+    elif os.path.exists("miubrt/version.py"):
         # must be a source distribution, use existing version file
         try:
-            from miubrt.version import git_revision as GIT_REVISION
             from miubrt.version import git_revision as GIT_HASH
+            from miubrt.version import git_revision as GIT_REVISION
         except ImportError:
-            raise ImportError("Unable to import git_revision. Try removing "
-                              "miubrt/version.py and the build directory "
-                              "before building.")
+            raise ImportError(
+                "Unable to import git_revision. Try removing "
+                "miubrt/version.py and the build directory "
+                "before building."
+            )
     else:
-        warnings.warn("miubrt source does not contain detailed version info "
-                      "via git or version.py, exact version can't be "
-                      "retrieved.", UserWarning)
+        warnings.warn(
+            "miubrt source does not contain detailed version info "
+            "via git or version.py, exact version can't be "
+            "retrieved.",
+            UserWarning,
+        )
     # parse version using semver
     ver = semver.parse_version_info(GIT_REVISION)
 
     # get commit count, dev0 means tagged commit -> release
-    ISRELEASED = ver.prerelease == 'dev0'
+    ISRELEASED = ver.prerelease == "dev0"
     if not ISRELEASED:
-        SHORT_VERSION = semver.format_version(ver.major,
-                                              ver.minor,
-                                              ver.patch,
-                                              ver.prerelease)
+        SHORT_VERSION = semver.format_version(
+            ver.major, ver.minor, ver.patch, ver.prerelease
+        )
         FULL_VERSION = GIT_REVISION
 
-    a = open(filename, 'w')
+    a = open(filename, "w")
     try:
-        a.write(cnt % {'short_version': SHORT_VERSION,
-                       'version': FULL_VERSION,
-                       'full_version': GIT_REVISION,
-                       'git_revision': GIT_HASH,
-                       'isrelease': str(ISRELEASED)})
+        a.write(
+            cnt
+            % {
+                "short_version": SHORT_VERSION,
+                "version": FULL_VERSION,
+                "full_version": GIT_REVISION,
+                "git_revision": GIT_HASH,
+                "isrelease": str(ISRELEASED),
+            }
+        )
     finally:
         a.close()
 
@@ -158,10 +162,13 @@ def setup_package():
     # rewrite version file
     write_version_py()
 
-    from setuptools import setup, find_packages
+    from setuptools import find_packages, setup
 
-    with open('requirements.txt', 'r') as f:
-        INSTALL_REQUIRES = [rq for rq in f.read().split('\n') if rq != '']
+    with open("requirements.txt", "r") as f:
+        INSTALL_REQUIRES = [rq for rq in f.read().split("\n") if rq != ""]
+
+    with open("requirements_devel.txt", "r") as f:
+        DEVEL_REQUIRES = [rq for rq in f.read().split("\n") if rq != ""]
 
     metadata = dict(
         name=NAME,
@@ -176,23 +183,12 @@ def setup_package():
         classifiers=CLASSIFIERS,
         platforms=PLATFORMS,
         install_requires=INSTALL_REQUIRES,
+        extras_require={"dev": DEVEL_REQUIRES},
         packages=find_packages(),
-        # entry_points={
-        #     'console_scripts': [
-        #         'radolan2netcdf=miubrt.scripts.radolan2netcdf:main',
-        #         'gamic2cfradial=miubrt.scripts.gamic2cfradial:main',
-        #         'boxpol2cfradial=miubrt.scripts.boxpol2cfradial:main',
-        #         'juxpol2cfradial=miubrt.scripts.juxpol2cfradial:main',
-        #         'dwd2cfradial=miubrt.scripts.dwd2cfradial:main',
-        #         'create_cvp=miubrt.scripts.create_cvp:main',
-        #         'plot_cvp=miubrt.scripts.plot_cvp:main',
-        #         'plot_ppi=miubrt.scripts.plot_ppi:main',
-        #     ]
-        # },
     )
 
     setup(**metadata)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     setup_package()
