@@ -37,3 +37,4 @@ else:
     from . import io  # noqa
     from . import util  # noqa
     from . import xarray  # noqa
+    from . import pol #noqa
