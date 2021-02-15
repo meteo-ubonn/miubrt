@@ -7,6 +7,7 @@ import numpy as np
 import xarray as xr
 
 
+
 def calib_mask(ds,i, par):
     """Calibrate Polarimetric Moments"""
     height = ds['z']
@@ -36,9 +37,9 @@ def calib_mask(ds,i, par):
     return zh, zdr, kdp, rhohv, phidp, height
 
 
-def phase_offset(ds):
+def phase_offset(ds,rhohv_min):
     """Phase offset via phase histogram"""
-    phioff = ds.PHIDP.copy().where((ds.RHOHV>=0.8) & (ds.DBZH>=0))
+    phioff = ds.PHIDP.copy().where((ds.RHOHV>=rhohv_min) & (ds.DBZH>=0))
     #create binary array
     phib   = xr.where(np.isnan(phioff), 0, 1) 
     #calculuate rolling sum
@@ -53,9 +54,10 @@ def phase_offset(ds):
 
     # get phase values in specified range
     off = phioff.where((phioff.range >= start_range) & (phioff.range <= stop_range))
+    
     # calculate nan median over range
     off = off.median(dim='range', skipna=True)
-    off
+    
     #hist = off.hvplot.line(groupby="time", x="azimuth",
     #                      #xlim=(100, 160), 
     #                      ylim=(120, 150),
@@ -70,9 +72,38 @@ def phase_offset(ds):
     offset = phi_offset1.copy()
     # Fill start of radial with offset median
     phi_fix = ds.PHIDP.where(ds.PHIDP.range > start_range).fillna(offset)
+    
     phi_fix = phi_fix - offset
-
+    
     #dealias
     phi_fix = xr.where((phi_fix <= (offset-180)), phi_fix + 360., phi_fix)
     phi_fix = phi_fix.where(ds.VRADH > ds.VRADH.min())
     return(phi_fix)
+
+def phidp_filter(phidpR,rhohv,len1,len2,na,nrange,az):
+    nfin = np.empty([na, nrange])
+    phib   = xr.where(np.isnan(phidpR), 0, 1) 
+    lphi = 0
+    lconf = len2
+    lra = 0
+    for ri in range(nrange):
+        up = np.minimum(ri+len1,nrange-2)
+        down = np.maximum(ri-len1,0)
+        phit = phib[az,down:up]
+        indphit = np.where(phit ==1)
+        phis = np.sum(phit)
+        if (phis>0):
+            nfin[az,ri] = np.sum(rhohv.values[az,down+indphit],axis=1)
+        if (phib[az,ri]==1):
+            if ((phidpR[az,ri]<lphi-1) | (phidpR[az,ri]>lphi+5)):
+                if (nfin[az,ri]>lconf):
+                    lphi = phidpR[az,ri]
+                    lconf = nfin[az,ri]
+                    phidpR[az,ri] = np.nan
+                else:
+                    phidpR[az,ri] = np.nan
+            else:
+                lphi = phidpR[az,ri]
+                lconf = nfin[az,ri]
+                lra   = ri     
+    return(phidpR)
