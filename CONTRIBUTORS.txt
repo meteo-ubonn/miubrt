@@ -3,6 +3,7 @@ Developers
 
 Kai Mühlbauer - University of Bonn
 Prabhakar Shrestha - University of Bonn
+Raquel Evaristo - University of Bonn
 
 
 Contributors
