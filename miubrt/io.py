@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-# Copyright (c) 2020, miub developers.
+# Copyright (c) 2023, miub developers.
 # Distributed under the MIT License. See LICENSE.txt for more info.
 
 import datetime as dt
 import os
 
 import numpy as np
-
 import wradlib as wrl
 
 from .util import create_filelist
