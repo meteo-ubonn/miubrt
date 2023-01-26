@@ -1,21 +1,30 @@
 name: CI
+env:
+  micromamba_version: 1.1
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  release:
+    types:
+      - created
+
+  workflow_dispatch:
 
 jobs:
   lint:
     name: lint and style checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
         with:
-          python-version: 3.9
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -31,8 +40,10 @@ jobs:
           isort --check .
 
   build_0:
-    name: notebooks tests
+    name: miubrt notebook tests
     runs-on: ubuntu-latest
+    needs: [lint]
+    continue-on-error: true
     defaults:
       run:
         shell: bash -l {0}
@@ -41,38 +52,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.11"]
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: install micromamba
-      run: |
-        wget -qO- https://micromamba.snakepit.net/api/micromamba/linux-64/latest | tar -xvj bin/micromamba --strip-components=1
-        ./micromamba shell init -s bash -p ~/micromamba
-    - name: Install deps
-      run: |
-        export MAMBA_ROOT_PREFIX=~/micromamba
-        export MAMBA_EXE=$(pwd)/micromamba
-        . $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh
-        ./micromamba create --yes -n miubrt-tests python=${{ matrix.python-version }} --file requirements.txt --file requirements_devel.txt --channel conda-forge
-    - name: Install miubrt
-      run: |
-        export MAMBA_ROOT_PREFIX=~/micromamba
-        export MAMBA_EXE=$(pwd)/micromamba
-        . $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh
-        micromamba activate miubrt-tests
-        python setup.py sdist
-        python -m pip install . --no-deps
-    - name: Clone miubrt-test-data
-      run: |
-        git clone https://github.com/meteo-ubonn/miubrt-test-data.git
-    - name: Test with pytest
-      run: |
-        export MAMBA_ROOT_PREFIX=~/micromamba
-        export MAMBA_EXE=$(pwd)/micromamba
-        . $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh
-        micromamba activate miubrt-tests
-        echo $MIUBRT_DATA
-        export MIUBRT_DATA=`realpath $MIUBRT_DATA`
-        pytest -v notebooks/
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install micromamba environment
+        uses: mamba-org/provision-with-micromamba@main
+        with:
+          environment-name: miubrt-tests
+          environment-file: ci/requirements/notebooktests.yml
+          extra-specs: |
+            python=${{ matrix.python-version }}
+      - name: Install miubrt
+        run: |
+          python -m pip install . --no-deps
+      - name: Clone miubrt-test-data
+        run: |
+          git clone https://github.com/meteo-ubonn/miubrt-test-data.git
+      - name: Version Info
+        run: |
+          python -c "import miubrt; print(miubrt.version.version)"
+          python -c "import wradlib; print(wradlib.show_versions())"
+      - name: Test with pytest
+        run: |
+          echo $MIUBRT_DATA
+          export MIUBRT_DATA=`realpath $MIUBRT_DATA`
+          pytest -n auto --verbose --durations=15 --cov-report xml:coverage.xml --cov=miubrt --pyargs notebooks
+#      - name: Upload coverage to Codecov
+#        uses: codecov/codecov-action@v3
+#        with:
+#          file: ./coverage.xml
+#          flags: notebooktests
+#          env_vars: RUNNER_OS,PYTHON_VERSION
+#          name: codecov-gha
+#          fail_ci_if_error: false

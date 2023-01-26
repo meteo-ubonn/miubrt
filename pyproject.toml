@@ -1,2 +1,12 @@
 [build-system]
-requires = ["setuptools", "wheel", "semver"]
+requires = [
+    "setuptools>=45",
+    "wheel",
+    "setuptools_scm[toml]>=7.0",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "miubrt/version.py"
+version_scheme = "release-branch-semver"
+fallback_version = "999"
