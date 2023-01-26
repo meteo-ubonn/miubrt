@@ -38,6 +38,7 @@ LICENSE = "MIT"
 CLASSIFIERS = list(filter(None, CLASSIFIERS.split("\n")))
 PLATFORMS = ["Linux", "Mac OS-X", "Unix", "Windows"]
 
+
 def setup_package():
 
     from setuptools import find_packages, setup
@@ -51,7 +52,7 @@ def setup_package():
     with open("requirements_devel.txt", "r") as f:
         DEVEL_REQUIRES = [rq for rq in f.read().split("\n") if rq != ""]
 
-    INSTALL_REQUIRES += OPTIONAL_REQUIRES
+    # INSTALL_REQUIRES += OPTIONAL_REQUIRES
 
     metadata = dict(
         name=NAME,
