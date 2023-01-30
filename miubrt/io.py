@@ -9,7 +9,7 @@ import numpy as np
 import wradlib as wrl
 import xarray as xr
 
-from .util import create_xpol_filelist, create_cpol_filelist
+from .util import create_cpol_filelist, create_xpol_filelist
 
 
 def get_xpol_path(inpath=None, start_time=None, loc="boxpol"):
@@ -69,7 +69,7 @@ def get_cpol_path(path=None, date=None, loc=None, sname=None, elev_id=None):
         Path to radar data
     """
     if path is None:
-        path = f'/automount/realpep/upload/RealPEP-SPP/DWD-CBand'
+        path = '/automount/realpep/upload/RealPEP-SPP/DWD-CBand'
     if date is None:
         raise ValueError("need date")
     if loc is None:
