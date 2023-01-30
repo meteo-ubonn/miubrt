@@ -1,3 +1,38 @@
+[project]
+name = "miubrt"
+authors = [
+    {name = "Kai Mühlbauer", email = "kai.muehlbauer@uni-bonn.de"},
+]
+description = "miubrt - MIUB-radartools - Tools for exploitation of BoXPol radar data and
+DWD radar network"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE.txt"}
+keywords =
+classifiers = [
+    "Development Status :: 4 - Beta"
+    "License :: OSI Approved :: MIT License"
+    "Operating System :: OS Independent"
+    "Intended Audience :: Science/Research"
+    "Intended Audience :: Developers"
+    "Intended Audience :: Education"
+    "Programming Language :: Python"
+    "Programming Language :: Python :: 3.9"
+    "Programming Language :: Python :: 3.10"
+    "Programming Language :: Python :: 3.11"
+    "Topic :: Scientific/Engineering"
+    "Topic :: Scientific/Engineering :: Atmospheric Science"
+]
+dependencies = {file = ["requirements.txt]}
+]
+dynamic = ["version"]
+
+[project.urls] =
+homepage = "https://github.com/meteo-ubonn/miubrt"
+documentation = "https://github.com/meteo-ubonn/miubrt"
+repository = "https://github.com/meteo-ubonn/miubrt"
+changelog = "https://github.com/meteo-ubonn/miubrt"
+
 [build-system]
 requires = [
     "setuptools>=45",
