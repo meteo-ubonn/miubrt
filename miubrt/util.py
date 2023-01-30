@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (c) 2019-2020, miub developers.
+# Copyright (c) 2019-2023, miub developers.
 # Distributed under the MIT License. See LICENSE.txt for more info.
 
 import datetime as dt
@@ -26,7 +26,7 @@ def get_datetime_from_filename(filename, regex):
     return dt.datetime.strptime(match, fmt)
 
 
-def create_filelist(path_glob, starttime, endtime):
+def create_xpol_filelist(path_glob, starttime, endtime):
     """Create filelist from path_glob and filename dates"""
     file_names = sorted(glob.glob(path_glob))
     regex = get_file_date_regex(file_names[0])
@@ -34,3 +34,15 @@ def create_filelist(path_glob, starttime, endtime):
         time = get_datetime_from_filename(fname, regex)
         if time >= starttime and time < endtime:
             yield fname
+
+
+def create_cpol_filelist(inpath, starttime, endtime, moments):
+    """Create filelist from path_glob and filename dates"""
+    for mom in moments:
+        pglob = inpath + f'{mom}_*'
+        file_names = sorted(glob.glob(pglob))
+        regex = get_file_date_regex(file_names[0])
+        for fname in file_names:
+            time = get_datetime_from_filename(fname, regex)
+            if time >= starttime and time < endtime:
+                yield fname
