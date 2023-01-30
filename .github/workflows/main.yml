@@ -75,8 +75,8 @@ jobs:
         run: |
           echo $MIUBRT_DATA
           export MIUBRT_DATA=`realpath $MIUBRT_DATA`
-          mkdir miubrt/notebooks/tests
-          cp miubrt/notebooks/explore_boxpol.ipynb miubrt/notebooks/tests/.
+          mkdir notebooks/tests
+          cp notebooks/explore_boxpol.ipynb notebooks/tests/.
           pytest -n auto --verbose --durations=15 --cov-report xml:coverage.xml --cov=miubrt --pyargs notebooks/tests
 #      - name: Upload coverage to Codecov
 #        uses: codecov/codecov-action@v3
