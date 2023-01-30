@@ -1,2 +1,86 @@
+[project]
+name = "miubrt"
+authors = [
+    {name = "Kai Mühlbauer", email = "kai.muehlbauer@uni-bonn.de"},
+]
+description = """miubrt - MIUB-radartools - Tools for exploitation of BoXPol radar data and
+DWD radar network"""
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE.txt"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+]
+dynamic = ["version", "dependencies"]
+
+[project.urls]
+homepage = "https://github.com/meteo-ubonn/miubrt"
+documentation = "https://github.com/meteo-ubonn/miubrt"
+repository = "https://github.com/meteo-ubonn/miubrt"
+changelog = "https://github.com/meteo-ubonn/miubrt"
+
 [build-system]
-requires = ["setuptools", "wheel", "semver"]
+requires = [
+    "setuptools>=45",
+    "wheel",
+    "setuptools_scm[toml]>=7.0",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools]
+include-package-data = false
+packages = ["miubrt"]
+
+[tool.setuptools_scm]
+write_to = "miubrt/version.py"
+version_scheme = "release-branch-semver"
+fallback_version = "999"
+
+[tool.black]
+target-version = ["py39"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 88
+builtins = ["ellipsis"]
+exclude = [
+    ".eggs",
+    "doc",
+]
+
+# E402: module level import not at top of file
+# E501: line too long - let black worry about that
+# E731: do not assign a lambda expression, use a def
+ignore = [
+    "E402",
+    "E501",
+    "E731",
+]
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    "W",
+    # isort
+    "I",
+    # Pyupgrade
+    "UP",
+]
+
+[tool.ruff.isort]
+known-first-party = ["miubrt"]

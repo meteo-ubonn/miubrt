@@ -1,0 +1,42 @@
+name: miubrt-notebooktests
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.9
+  - bottleneck
+  - cartopy
+  - codecov
+  - coverage
+  - dask
+  - datashader
+  - deprecation
+  - gdal
+  - geopandas
+  - h5py
+  - h5netcdf
+  - hvplot
+  - lat_lon_parser
+  - nbconvert
+  - nc-time-axis
+  - netCDF4
+  - notebook
+  - numpy
+  - matplotlib-base
+  - pint
+  - pint-xarray
+  - pip
+  - psutil
+  - pytest
+  - pytest-cov
+  - pytest-doctestplus
+  - pytest-sugar
+  - pytest-xdist
+  - requests
+  - rioxarray
+  - scipy
+  - setuptools
+  - tqdm
+  - wetterdienst
+  - wradlib
+  - xarray
+  - xmltodict
