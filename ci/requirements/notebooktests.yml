@@ -8,6 +8,7 @@ dependencies:
   - codecov
   - coverage
   - dask
+  - datashader
   - deprecation
   - gdal
   - geopandas
