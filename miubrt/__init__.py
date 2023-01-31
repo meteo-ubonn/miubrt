@@ -23,5 +23,6 @@ except Exception:
 
 # packages
 from . import io  # noqa
+from . import plot  # noqa
 from . import util  # noqa
 from . import xarray  # noqa
