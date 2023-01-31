@@ -46,3 +46,20 @@ def create_cpol_filelist(inpath, starttime, endtime, moments):
             time = get_datetime_from_filename(fname, regex)
             if time >= starttime and time < endtime:
                 yield fname
+
+
+def polyarea(p):
+    """Calculate area of polygon using shoelace formula.
+
+    https://en.wikipedia.org/wiki/Shoelace_formula
+
+    .. math::
+
+        A = \frac{1}{2} \\sum_{i=1}^{n} x_i(y_{i+1} - y_{i-1})
+    """
+    area = 0.0
+    x = p[:, 0]
+    y = p[:, 1]
+    for i in range(len(x)):
+        area += x[i - 1] * (y[i] - y[i - 2])
+    return abs(area) / 2.0
