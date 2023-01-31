@@ -3,7 +3,9 @@
 # Distributed under the MIT License. See LICENSE.txt for more info.
 
 import os
+
 import contourpy
+import numpy as np
 
 from .util import polyarea
 

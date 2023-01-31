@@ -55,7 +55,7 @@ def polyarea(p):
 
     .. math::
 
-        A = \frac{1}{2} \sum_{i=1}^{n} x_i(y_{i+1} - y_{i-1})
+        A = \frac{1}{2} \\sum_{i=1}^{n} x_i(y_{i+1} - y_{i-1})
     """
     area = 0.0
     x = p[:, 0]
