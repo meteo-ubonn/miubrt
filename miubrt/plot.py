@@ -45,7 +45,7 @@ class FilteredContourGenerator(contourpy.Mpl2014ContourGenerator):
         return ncseg, nckind
 
     def lines(self, level):
-        min_area = float(os.environ["MPL_MIN_CONTOUR_AREA"])
+        min_area = float(os.environ.get("MPL_MIN_CONTOUR_AREA", "0"))
         # get vertices/kinds
         vertices, kinds = super().lines(level)
         # return early if nothing to do
