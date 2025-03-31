@@ -5,6 +5,5 @@ nbformat
 pytest
 pytest-cov
 pytest-doctestplus
-pytest-doctestplus
 pytest-sugar
 pytest-xdist

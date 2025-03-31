@@ -2,7 +2,7 @@ name: miubrt-unittests
 channels:
   - conda-forge
 dependencies:
-  - python>=3.9
+  - python>=3.10
   - bottleneck
   - cartopy
   - codecov
@@ -27,4 +27,5 @@ dependencies:
   - setuptools
   - wradlib
   - xarray
+  - xradar
   - xmltodict

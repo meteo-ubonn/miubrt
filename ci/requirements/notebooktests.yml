@@ -2,7 +2,7 @@ name: miubrt-notebooktests
 channels:
   - conda-forge
 dependencies:
-  - python>=3.9
+  - python>=3.10
   - bottleneck
   - cartopy
   - codecov
@@ -39,4 +39,5 @@ dependencies:
   - wetterdienst
   - wradlib
   - xarray
+  - xradar
   - xmltodict
